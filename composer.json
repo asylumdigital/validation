@@ -1,5 +1,5 @@
 {
-    "name": "asylumdigital/gump",
+    "name": "asylum/gump",
     "description": "A fast, extensible & stand-alone PHP input validation class that allows you to validate any data.",
     "keywords": ["validation", "validator", "validate"],
     "authors": [
