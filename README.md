@@ -1,23 +1,31 @@
 # Getting started
 
-GUMP is a standalone PHP data validation and filtering class that makes validating any data easy and painless without the reliance on a framework. GUMP is open-source since 2013.
-
-[![License](https://poser.pugx.org/wixel/gump/license)](https://packagist.org/packages/wixel/gump)
-[![Total Downloads](https://poser.pugx.org/wixel/gump/downloads)](https://packagist.org/packages/wixel/gump)
-[![Latest Stable Version](https://poser.pugx.org/wixel/gump/v/stable)](https://packagist.org/packages/wixel/gump)
-[![Build Status](https://travis-ci.org/Wixel/GUMP.svg?branch=master)](https://travis-ci.org/Wixel/GUMP)
-[![Coverage Status](https://coveralls.io/repos/github/Wixel/GUMP/badge.svg?branch=master)](https://coveralls.io/github/Wixel/GUMP?branch=master)
+Validator is a standalone PHP data validation and filtering class that makes validating any data easy and painless without the reliance on a framework. Validator is forked from [GUMP](https://github.com/Wixel/GUMP).
 
 #### Install with composer
 
+Add validator as a VCS repository
+
+```json
+"repositories": {
+    "asylum/validation": {
+        "type": "vcs",
+        "url": "git@github.com:asylumdigital/validation.git"
+    }
+},
 ```
-composer require wixel/gump
+
+```shell
+composer require asylum/validation
 ```
 
 ### Short format example for validations
 
 ```php
-$is_valid = GUMP::is_valid(array_merge($_POST, $_FILES), [
+
+use Asylum\Validation\Validator;
+
+$is_valid = Validator::is_valid(array_merge($_POST, $_FILES), [
     'username'       => 'required|alpha_numeric',
     'password'       => 'required|between_len,4;100',
     'avatar'         => 'required_file|extension,png;jpg',
@@ -30,7 +38,7 @@ $is_valid = GUMP::is_valid(array_merge($_POST, $_FILES), [
 ]);
 
 // 1st array is rules definition, 2nd is field-rule specific error messages (optional)
-$is_valid = GUMP::is_valid(array_merge($_POST, $_FILES), [
+$is_valid = Validator::is_valid(array_merge($_POST, $_FILES), [
     'username' => ['required', 'alpha_numeric'],
     'password' => ['required', 'between_len' => [6, 100]],
     'avatar'   => ['required_file', 'extension' => ['png', 'jpg']]
@@ -50,7 +58,9 @@ if ($is_valid === true) {
 ### Short format example for filtering
 
 ```php
-$filtered = GUMP::filter_input([
+use Asylum\Validation\Validator;
+
+$filtered = Validator::filter_input([
     'field'       => ' text ',
     'other_field' => 'Cool Title'
 ], [
@@ -65,10 +75,12 @@ var_dump($filtered['other_field']); // result: "cool-title"
 ### Long format example
 
 ```php
-$gump = new GUMP();
+use Asylum\Validation\Validator;
+
+$validator = new Validator;
 
 // set validation rules
-$gump->validation_rules([
+$validator->validation_rules([
     'username'    => 'required|alpha_numeric|max_len,100|min_len,6',
     'password'    => 'required|max_len,100|min_len,6',
     'email'       => 'required|valid_email',
@@ -77,13 +89,13 @@ $gump->validation_rules([
 ]);
 
 // set field-rule specific error messages
-$gump->set_fields_error_messages([
+$validator->set_fields_error_messages([
     'username'      => ['required' => 'Fill the Username field please, its required.'],
     'credit_card'   => ['extension' => 'Please enter a valid credit card.']
 ]);
 
 // set filter rules
-$gump->filter_rules([
+$validator->filter_rules([
     'username' => 'trim|sanitize_string',
     'password' => 'trim',
     'email'    => 'trim|sanitize_email',
@@ -93,12 +105,12 @@ $gump->filter_rules([
 
 // on success: returns array with same input structure, but after filters have run
 // on error: returns false
-$valid_data = $gump->run($_POST);
+$valid_data = $validator->run($_POST);
 
-if ($gump->errors()) {
-    var_dump($gump->get_readable_errors()); // ['Field <span class="gump-field">Somefield</span> is required.'] 
+if ($validator->errors()) {
+    var_dump($validator->get_readable_errors()); // ['Field <span class="gump-field">Somefield</span> is required.']
     // or
-    var_dump($gump->get_errors_array()); // ['field' => 'Field Somefield is required']
+    var_dump($validator->get_errors_array()); // ['field' => 'Field Somefield is required']
 } else {
     var_dump($valid_data);
 }
@@ -108,7 +120,9 @@ if ($gump->errors()) {
 ---------------------------
 **Important:** If you use Pipe or Semicolon as parameter value, you **must** use array format.
 ```php
-$is_valid = GUMP::is_valid(array_merge($_POST, $_FILES), [
+use Asylum\Validation\Validator;
+
+$is_valid = Validator::is_valid(array_merge($_POST, $_FILES), [
     'field' => 'regex,/partOf;my|Regex/', // NO
     'field' => ['regex' => '/partOf;my|Regex/'] // YES
 ]);
@@ -200,34 +214,34 @@ Filter rules can also be any PHP native function (e.g.: trim).
  * Returns array of errors with detailed info. which you can then use with your own helpers.
  * (field name, input value, rule that failed and it's parameters).
  */
-$gump->validate(array $input, array $ruleset);
+$validator->validate(array $input, array $ruleset);
 
 /**
  * Filters input data according to the provided filterset
  *
  * Returns array with same input structure but after filters have been applied.
  */
-$gump->filter(array $input, array $filterset);
+$validator->filter(array $input, array $filterset);
 
 // Sanitizes data and converts strings to UTF-8 (if available), optionally according to the provided field whitelist
-$gump->sanitize(array $input, $whitelist = null);
+$validator->sanitize(array $input, $whitelist = null);
 
 // Override field names in error messages
-GUMP::set_field_name('str', 'Street');
-GUMP::set_field_names([
+Validator::set_field_name('str', 'Street');
+Validator::set_field_names([
     'str' => 'Street',
     'zip' => 'ZIP Code'
 ]);
 
 // Set custom error messages for rules.
-GUMP::set_error_message('required', '{field} is required.');
-GUMP::set_error_messages([
+Validator::set_error_message('required', '{field} is required.');
+Validator::set_error_messages([
     'required'    => '{field} is required.',
     'valid_email' => '{field} must be a valid email.'
 ]);
 
 // Strips and encodes unwanted characters
-GUMP::xss_clean(array $data);
+Validator::xss_clean(array $data);
 ```
 
 ###  Creating your own validators and filters
@@ -247,7 +261,7 @@ Adding custom validators and filters is made easy by using callback functions.
  *
  * @return bool   true or false whether the validation was successful or not
  */
-GUMP::add_validator("equals_string", function($field, array $input, array $params, $value) {
+Validator::add_validator("equals_string", function($field, array $input, array $params, $value) {
     return $value === $params;
 }, 'Field {field} does not equal to {param}.');
 
@@ -257,7 +271,7 @@ GUMP::add_validator("equals_string", function($field, array $input, array $param
  *
  * @return mixed  result of filtered value
  */
-GUMP::add_filter("upper", function($value, array $params = []) {
+Validator::add_filter("upper", function($value, array $params = []) {
     return strtoupper($value);
 });
 ```
@@ -268,7 +282,9 @@ Alternately, you can simply create your own class that extends GUMP. You only ha
 * For validator methods, prepend the method name with "validate_".
 
 ```php
-class MyClass extends GUMP
+use Asylum\Validation\Validator;
+
+class MyClass extends Validator
 {
     protected function filter_myfilter($value, array $params = [])
     {
@@ -290,9 +306,9 @@ Global configuration
 This configuration values allows you to change default rules delimiters (e.g.: `required|contains,value1;value2` to `required|contains:value1,value2`).
 
 ```php
-GUMP::$rules_delimiter = '|';
+Validator::$rules_delimiter = '|';
 
-GUMP::$rules_parameters_delimiter = ',';
+Validator::$rules_parameters_delimiter = ',';
 
-GUMP::$rules_parameters_arrays_delimiter = ';';
+Validator::$rules_parameters_arrays_delimiter = ';';
 ```
