@@ -13,8 +13,7 @@
         }
     ],
     "autoload": {
-        "files": ["gump.class.php"],
-        "psr-4": { "GUMP\\": "src/" }
+        "psr-4": { "Asylum\\Validation\\": "src/" }
     },
     "license": "MIT",
     "homepage": "https://wixelhq.com/",

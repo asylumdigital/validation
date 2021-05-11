@@ -1,6 +1,6 @@
 <?php
 
-namespace GUMP;
+namespace Asylum\Validation;
 
 class ArrayHelpers
 {

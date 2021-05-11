@@ -1,7 +1,9 @@
 <?php
 
-use GUMP\ArrayHelpers;
-use GUMP\EnvHelpers;
+namespace Asylum\Validation;
+
+use ArrayHelpers;
+use EnvHelpers;
 
 class GUMP
 {

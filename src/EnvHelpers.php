@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace GUMP;
+namespace Asylum\Validation;
 
 /**
  * Helpers that are environment dependant.
@@ -48,7 +48,11 @@ class EnvHelpers
      * @inheritDoc file_get_contents
      */
     public static function file_get_contents(
-        $filename, $use_include_path = false, $context = null, $offset = 0, $maxlen = null
+        $filename,
+        $use_include_path = false,
+        $context = null,
+        $offset = 0,
+        $maxlen = null
     ) {
         return file_get_contents($filename, $use_include_path, $context, $offset, $maxlen);
     }
