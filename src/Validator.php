@@ -5,7 +5,7 @@ namespace Asylum\Validation;
 use Asylum\Validation\ArrayHelpers;
 use Asylum\Validation\EnvHelpers;
 
-class Gump
+class Validator
 {
     /**
      * Singleton instance of GUMP.

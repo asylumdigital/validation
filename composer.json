@@ -1,5 +1,5 @@
 {
-    "name": "asylum/gump",
+    "name": "asylum/validation",
     "description": "A fast, extensible & stand-alone PHP input validation class that allows you to validate any data.",
     "keywords": ["validation", "validator", "validate"],
     "authors": [
@@ -10,13 +10,17 @@
         {
             "name": "Filis Futsarov",
             "homepage": "https://filis.me"
+        },
+        {
+            "name": "Phil Baker",
+            "homepage": "https://asylumdigital.co.uk"
         }
     ],
     "autoload": {
         "psr-4": { "Asylum\\Validation\\": "src/" }
     },
     "license": "MIT",
-    "homepage": "https://wixelhq.com/",
+    "homepage": "https://asylumdigital.co.uk/",
     "require-dev": {
         "mockery/mockery": "^1.3",
         "maddhatter/markdown-table": "^1.0",
