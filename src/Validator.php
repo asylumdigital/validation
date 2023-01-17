@@ -215,7 +215,7 @@ class Validator
     public static function xss_clean(array $data)
     {
         foreach ($data as $k => $v) {
-            $data[$k] = filter_var($v, FILTER_SANITIZE_STRING);
+            $data[$k] = self::polyfill_filter_var_string($v);
         }
 
         return $data;
@@ -410,7 +410,7 @@ class Validator
                     }
                 }
 
-                $value = filter_var($value, FILTER_SANITIZE_STRING);
+                $value = self::polyfill_filter_var_string($value);
             }
 
             $return[$field] = $value;
@@ -1045,7 +1045,18 @@ class Validator
      */
     protected function filter_sanitize_string($value, array $params = [])
     {
-        return filter_var($value, FILTER_SANITIZE_STRING);
+        return self::polyfill_filter_var_string($value);
+    }
+
+    /**
+     * Implemented to replace FILTER_SANITIZE_STRING behaviour deprecated in php8.1
+     *
+     * @return string
+     */
+    private static function polyfill_filter_var_string($value)
+    {
+        $str = preg_replace('/x00|<[^>]*>?/', '', $value);
+        return (string)str_replace(['', ''], ['&#39;', '&#34;'], $str);
     }
 
     /**
