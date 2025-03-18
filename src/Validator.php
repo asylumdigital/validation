@@ -141,6 +141,13 @@ class Validator
      */
     protected $errors = [];
 
+    /**
+     * Language class wrapper
+     *
+     * @var Language
+     */
+    protected $languages;
+
     // ** ------------------------- Validation Helpers ---------------------------- ** //
 
     /**
@@ -151,8 +158,9 @@ class Validator
      */
     public function __construct(string $lang = 'en')
     {
-        $lang_file_location = __DIR__.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$lang.'.php';
-        if (!EnvHelpers::file_exists($lang_file_location)) {
+        $this->languages = Language::get_instance();
+
+        if (!in_array($lang, $this->languages->getLanguages())) {
             throw new \Exception(sprintf("'%s' language is not supported.", $lang));
         }
 
@@ -750,8 +758,7 @@ class Validator
      */
     protected function get_messages()
     {
-        $lang_file = __DIR__.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$this->lang.'.php';
-        $messages = include $lang_file;
+        $messages = $this->languages->getMessages($this->lang);
 
         return array_merge($messages, self::$validation_methods_errors);
     }
